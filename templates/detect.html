@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}Detect — TruthScan{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="section-tag">Analysis</span>
+    <h1 class="page-title">Detect Fake News</h1>
+    <p class="page-sub">Paste any news article below. TruthScan will analyse it using the stacking ensemble and return a verdict within seconds.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container container-narrow">
+    <form method="POST" action="{{ url_for('detect') }}" id="detectForm">
+      <div class="form-card">
+        <div class="form-field">
+          <label for="article_text" class="form-label">
+            Article Text
+            <span class="label-hint">Minimum 30 characters</span>
+          </label>
+          <textarea
+            id="article_text"
+            name="article_text"
+            class="form-textarea"
+            placeholder="Paste your news article here. The more text you provide, the more accurate the analysis will be..."
+            rows="12"
+            required
+            minlength="30"
+          ></textarea>
+          <div class="textarea-footer">
+            <span id="charCount">0 characters</span>
+            <span id="wordCount">0 words</span>
+          </div>
+        </div>
+
+        <div class="detect-tip">
+          <span class="tip-icon">💡</span>
+          <span>For best results include the headline, body text and any quotes. Short fragments may reduce accuracy.</span>
+        </div>
+
+        <button type="submit" class="btn-primary btn-full" id="submitBtn">
+          <span id="btnText">Analyse Article</span>
+          <span id="btnLoader" class="btn-loader hidden">Analysing...</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </form>
+
+    <!-- Sample articles -->
+    <div class="samples-section">
+      <h3 class="samples-title">Try a sample article</h3>
+      <div class="samples-grid">
+        <button class="sample-btn" onclick="loadSample('real')">
+          <span class="badge-real">REAL</span>
+          Reuters news sample
+        </button>
+        <button class="sample-btn" onclick="loadSample('fake')">
+          <span class="badge-fake">FAKE</span>
+          Conspiracy article sample
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const realSample = `Federal Reserve officials signaled they are in no hurry to cut interest rates, with multiple policymakers indicating the central bank needs more evidence that inflation is sustainably moving toward its 2 percent target before easing monetary policy. Speaking at a financial conference, Fed Chair Jerome Powell said the latest economic data has not given the committee greater confidence that inflation is moving sustainably toward 2 percent, adding that it is likely to take longer than expected to achieve that confidence. The comments came after data showed consumer prices rose more than expected in the first quarter, complicating the Fed's path toward rate cuts that markets had anticipated earlier in the year.`;
+
+const fakeSample = `BREAKING: Shocking exclusive bombshell that mainstream media is covering up! Secret documents EXPOSED reveal the government has been hiding the truth about a massive conspiracy that they don't want you to know about. Wake up sheeple! The deep state has been secretly controlling everything you eat, drink and think. Banned from all platforms, this is the information they're desperate to suppress. Share before this gets censored! You won't believe what they've been hiding in plain sight for decades. The hoax runs deeper than anyone imagined. This fraud has been going on for years and the cover-up is massive.`;
+
+function loadSample(type) {
+  document.getElementById('article_text').value = type === 'real' ? realSample : fakeSample;
+  updateCounts();
+}
+
+function updateCounts() {
+  const text = document.getElementById('article_text').value;
+  const chars = text.length;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  document.getElementById('charCount').textContent = chars + ' characters';
+  document.getElementById('wordCount').textContent = words + ' words';
+}
+
+document.getElementById('article_text').addEventListener('input', updateCounts);
+
+document.getElementById('detectForm').addEventListener('submit', function() {
+  document.getElementById('btnText').classList.add('hidden');
+  document.getElementById('btnLoader').classList.remove('hidden');
+});
+</script>
+{% endblock %}

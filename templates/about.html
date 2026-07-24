@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}About — TruthScan{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="section-tag">Research</span>
+    <h1 class="page-title">About TruthScan</h1>
+    <p class="page-sub">Honours research project — Bachelor of ICT, Durban University of Technology, 2026.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container container-narrow">
+
+    <div class="about-block">
+      <h2>The Research Problem</h2>
+      <p>Fake news spreads faster than corrections. Existing detection systems struggle to generalise across different news sources and domains. This project addresses the cross-domain generalisation gap in automated fake news detection.</p>
+    </div>
+
+    <div class="about-block">
+      <h2>The Solution</h2>
+      <p>A three-model stacking ensemble that combines the strengths of transformer-based contextual understanding, sequential pattern learning and gradient-boosted feature classification. The ensemble was trained on 116,971 articles from two independent datasets.</p>
+    </div>
+
+    <div class="about-block">
+      <h2>Architecture</h2>
+      <div class="arch-table">
+        <div class="arch-row">
+          <span class="arch-model">BERT</span>
+          <span class="arch-desc">bert-base-uncased fine-tuned for 3 epochs. Extracts 768-dimensional CLS embeddings capturing deep contextual language understanding.</span>
+          <span class="arch-score">98.28% F1</span>
+        </div>
+        <div class="arch-row">
+          <span class="arch-model">BiLSTM</span>
+          <span class="arch-desc">Two-layer bidirectional LSTM with 128 hidden units per direction and 0.3 dropout. Learns sequential patterns from BERT embeddings.</span>
+          <span class="arch-score">98.68% F1</span>
+        </div>
+        <div class="arch-row">
+          <span class="arch-model">XGBoost</span>
+          <span class="arch-desc">Gradient boosted trees on TF-IDF features (50,000 unigrams and bigrams). Fast, interpretable and robust to noise.</span>
+          <span class="arch-score">96.60% F1</span>
+        </div>
+        <div class="arch-row arch-row-gold">
+          <span class="arch-model gold-text">Ensemble</span>
+          <span class="arch-desc">XGBoost meta-learner combining all three models. 50,832 stacked features. 5-fold cross-validation. McNemar's p = 0.000012.</span>
+          <span class="arch-score gold-text">99.94% F1</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-block">
+      <h2>Datasets</h2>
+      <div class="dataset-grid">
+        <div class="dataset-card">
+          <h4>WELFake</h4>
+          <p>72,134 articles. Balanced: 37,106 real and 35,028 fake. Multi-source news content from the internet.</p>
+        </div>
+        <div class="dataset-card">
+          <h4>ISOT</h4>
+          <p>44,898 articles. Real news from Reuters. Fake news from unreliable sources. University of Victoria.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="about-block">
+      <h2>Key Finding</h2>
+      <p>The stacking ensemble achieved 99.88% F1 on the out-of-domain ISOT dataset, an F1 degradation of −0.0121 compared to WELFake. The research hypothesis that F1 degradation would be below 5% was confirmed with statistical significance at p &lt; 0.0001.</p>
+    </div>
+
+    <div class="about-block">
+      <h2>Researcher</h2>
+      <div class="researcher-card">
+        <div class="researcher-avatar">SN</div>
+        <div class="researcher-info">
+          <h3>Siyabonga Nzuza</h3>
+          <p>Bachelor of Information and Communication Technology (Honours)</p>
+          <p>Durban University of Technology, 2026</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

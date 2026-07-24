@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}History — TruthScan{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="section-tag">Your Account</span>
+    <h1 class="page-title">Detection History</h1>
+    <p class="page-sub">All articles you have analysed. Welcome back, <strong>{{ session.username }}</strong>.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    {% if detections %}
+    <div class="history-list">
+      {% for d in detections %}
+      <div class="history-item">
+        <div class="history-verdict">
+          <span class="badge-result {{ 'badge-real' if d.result == 'REAL' else 'badge-fake' }}">{{ d.result }}</span>
+          <span class="history-conf">{{ d.confidence }}%</span>
+        </div>
+        <div class="history-text">{{ d.article_preview }}</div>
+        <div class="history-meta">
+          <span>{{ d.word_count }} words</span>
+          <span>{{ d.created_at.strftime('%d %b %Y %H:%M') }}</span>
+          <a href="{{ url_for('result', detection_id=d.id) }}" class="history-view">View →</a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h3>No detections yet</h3>
+      <p>You have not analysed any articles yet. Start by scanning one now.</p>
+      <a href="{{ url_for('detect') }}" class="btn-primary">Detect Now →</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

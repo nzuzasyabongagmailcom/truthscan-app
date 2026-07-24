@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block title %}TruthScan — AI Fake News Detector{% endblock %}
+
+{% block content %}
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-lines"></div>
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      99.94% Accuracy · Stacking Ensemble
+    </div>
+    <h1 class="hero-title">
+      Detect Fake News<br>
+      <span class="gold-text">Instantly.</span>
+    </h1>
+    <p class="hero-subtitle">
+      Powered by a BERT + BiLSTM + XGBoost stacking ensemble trained on
+      over 116,000 news articles. Honours research — DUT 2025.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('detect') }}" class="btn-primary">
+        <span>Analyse Article</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="{{ url_for('about') }}" class="btn-ghost">Learn How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="stat-number">{{ total }}</span>
+        <span class="stat-label">Articles Scanned</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-number">{{ fake_count }}</span>
+        <span class="stat-label">Fake Detected</span>
+      </div>
+      <div class="hero-stat">
+        <span class="stat-number">{{ real_count }}</span>
+        <span class="stat-label">Real Verified</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Pipeline</span>
+      <h2 class="section-title">How TruthScan Works</h2>
+      <p class="section-sub">Three models. One powerful verdict.</p>
+    </div>
+    <div class="pipeline-grid">
+      <div class="pipeline-card">
+        <div class="pipeline-num">01</div>
+        <div class="pipeline-icon">🔤</div>
+        <h3>Text Input</h3>
+        <p>Paste any news article or excerpt. TruthScan handles cleaning, tokenisation and preprocessing automatically.</p>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-card">
+        <div class="pipeline-num">02</div>
+        <div class="pipeline-icon">🧠</div>
+        <h3>BERT + BiLSTM</h3>
+        <p>BERT fine-tuned on 57,000 articles extracts deep contextual embeddings. BiLSTM learns sequential patterns from those representations.</p>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-card">
+        <div class="pipeline-num">03</div>
+        <div class="pipeline-icon">🌲</div>
+        <h3>XGBoost Ensemble</h3>
+        <p>XGBoost acts as the meta-learner, combining BERT, BiLSTM and TF-IDF features into one final stacked prediction.</p>
+      </div>
+      <div class="pipeline-arrow">→</div>
+      <div class="pipeline-card pipeline-card-gold">
+        <div class="pipeline-num">04</div>
+        <div class="pipeline-icon">✅</div>
+        <h3>Verdict</h3>
+        <p>Real or Fake with confidence score and per-model breakdown. Statistically validated at p &lt; 0.0001.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── MODEL PERFORMANCE ── -->
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Results</span>
+      <h2 class="section-title">Model Performance</h2>
+      <p class="section-sub">Trained and evaluated on WELFake + ISOT datasets (116,971 articles)</p>
+    </div>
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">BERT Baseline</div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar" style="--w:98.28%"></div>
+        </div>
+        <div class="metric-value">98.28% F1</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">BiLSTM Baseline</div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar" style="--w:98.68%"></div>
+        </div>
+        <div class="metric-value">98.68% F1</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">XGBoost Baseline</div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar" style="--w:96.60%"></div>
+        </div>
+        <div class="metric-value">96.60% F1</div>
+      </div>
+      <div class="metric-card metric-card-gold">
+        <div class="metric-label">Stacking Ensemble ★</div>
+        <div class="metric-bar-wrap">
+          <div class="metric-bar metric-bar-gold" style="--w:99.94%"></div>
+        </div>
+        <div class="metric-value gold-text">99.94% F1</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── RECENT DETECTIONS ── -->
+{% if recent %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Live Feed</span>
+      <h2 class="section-title">Recent Detections</h2>
+    </div>
+    <div class="recent-list">
+      {% for d in recent %}
+      <div class="recent-item">
+        <span class="verdict-dot {{ 'dot-real' if d.result == 'REAL' else 'dot-fake' }}"></span>
+        <div class="recent-text">{{ d.article_preview[:120] }}...</div>
+        <div class="recent-meta">
+          <span class="badge-result {{ 'badge-real' if d.result == 'REAL' else 'badge-fake' }}">{{ d.result }}</span>
+          <span class="recent-conf">{{ d.confidence }}%</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="center-action">
+      <a href="{{ url_for('detect') }}" class="btn-primary">Scan Your Article →</a>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% endblock %}

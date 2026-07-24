@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}Result — TruthScan{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <div class="container">
+    <span class="section-tag">Analysis Complete</span>
+    <h1 class="page-title">Detection Result</h1>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container container-narrow">
+
+    <!-- VERDICT CARD -->
+    <div class="verdict-card {{ 'verdict-real' if d.result == 'REAL' else 'verdict-fake' }}">
+      <div class="verdict-glow"></div>
+      <div class="verdict-icon">{{ '✅' if d.result == 'REAL' else '🚨' }}</div>
+      <div class="verdict-label">This article is</div>
+      <div class="verdict-result">{{ d.result }}</div>
+      <div class="verdict-conf">
+        <div class="conf-ring">
+          <svg viewBox="0 0 120 120" class="conf-svg">
+            <circle cx="60" cy="60" r="50" class="conf-bg"/>
+            <circle cx="60" cy="60" r="50" class="conf-fill"
+              style="--pct: {{ d.confidence }}"/>
+          </svg>
+          <div class="conf-center">
+            <span class="conf-num">{{ d.confidence }}%</span>
+            <span class="conf-txt">confidence</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODEL BREAKDOWN -->
+    <div class="breakdown-card">
+      <h3 class="breakdown-title">Model Breakdown</h3>
+      <p class="breakdown-sub">Each model's individual confidence score</p>
+
+      <div class="model-row">
+        <div class="model-info">
+          <span class="model-name">BERT</span>
+          <span class="model-desc">Transformer contextual embeddings</span>
+        </div>
+        <div class="model-bar-wrap">
+          <div class="model-bar" style="--w:{{ d.bert_score }}%"></div>
+        </div>
+        <span class="model-score">{{ d.bert_score }}%</span>
+      </div>
+
+      <div class="model-row">
+        <div class="model-info">
+          <span class="model-name">BiLSTM</span>
+          <span class="model-desc">Sequential pattern learning</span>
+        </div>
+        <div class="model-bar-wrap">
+          <div class="model-bar" style="--w:{{ d.bilstm_score }}%"></div>
+        </div>
+        <span class="model-score">{{ d.bilstm_score }}%</span>
+      </div>
+
+      <div class="model-row">
+        <div class="model-info">
+          <span class="model-name">XGBoost</span>
+          <span class="model-desc">TF-IDF gradient boosting</span>
+        </div>
+        <div class="model-bar-wrap">
+          <div class="model-bar" style="--w:{{ d.xgboost_score }}%"></div>
+        </div>
+        <span class="model-score">{{ d.xgboost_score }}%</span>
+      </div>
+    </div>
+
+    <!-- ARTICLE META -->
+    <div class="meta-card">
+      <div class="meta-row">
+        <span class="meta-key">Word count</span>
+        <span class="meta-val">{{ d.word_count }} words</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Analysed at</span>
+        <span class="meta-val">{{ d.created_at.strftime('%d %B %Y, %H:%M') }}</span>
+      </div>
+      <div class="meta-row">
+        <span class="meta-key">Detection ID</span>
+        <span class="meta-val">#{{ d.id }}</span>
+      </div>
+    </div>
+
+    <!-- ARTICLE PREVIEW -->
+    <div class="article-preview-card">
+      <h3>Article Preview</h3>
+      <p>{{ d.article_preview }}</p>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="result-actions">
+      <a href="{{ url_for('detect') }}" class="btn-primary">Analyse Another →</a>
+      <a href="{{ url_for('index') }}" class="btn-ghost">Back to Home</a>
+    </div>
+
+  </div>
+</section>
+{% endblock %}
